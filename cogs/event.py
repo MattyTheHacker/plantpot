@@ -121,7 +121,7 @@ class Event(commands.Cog):
 
     async def eventWizardCheck(ctx):
         return (825241813505802270 in [role.id for role in ctx.author.roles]) or ctx.author.id == 115560604047114248
-        #return ctx.author.permissions_in(ctx.channel).manage_guild or 825241813505802270 in [role.id for role in ctx.author.roles]
+        # return ctx.author.permissions_in(ctx.channel).manage_guild or 825241813505802270 in [role.id for role in ctx.author.roles]
 
     async def rarityWizardCheck(ctx):
         return ctx.author.id in [115560604047114248, 579785620612972581]
@@ -151,7 +151,7 @@ class Event(commands.Cog):
         await m.edit(embed=embed)
         await m.clear_reactions()
 
-    #Displays all available events
+    # Displays all available events
     async def eventmenu(self, ctx, m):
         def check(r, u):
             return u == ctx.author and r.message == m
@@ -195,7 +195,7 @@ class Event(commands.Cog):
                     eventlist = await self.executesql('SELECT event_id, name FROM events WHERE server_id = ?', (ctx.guild.id,))
                     page = 0
 
-    #Displays a given event's images
+    # Displays a given event's images
     async def eventimagemenu(self, ctx, m, eventid):
         def check(r, u):
             return u == ctx.author and r.message == m
@@ -240,7 +240,7 @@ class Event(commands.Cog):
                     imagelist = await self.executesql('SELECT image_id, text FROM images WHERE event_id = ?', (eventid,))
                     page = 0
 
-    #Edit a given event's variables
+    # Edit a given event's variables
     async def editeventmenu(self, ctx, m, eventid):
         def check(r, u):
             return u == ctx.author and r.message == m
@@ -282,7 +282,7 @@ class Event(commands.Cog):
             elif r.emoji == self.EMOJIS['eject']:
                 return
 
-    #Edit a given image's variables
+    # Edit a given image's variables
     async def imagemenu(self, ctx, m, imageid):
         def check(r, u):
             return u == ctx.author and r.message == m
@@ -470,6 +470,7 @@ class Event(commands.Cog):
     async def makeimgurimage(self, ctx, m, name):
         def check(msg):
             return msg.author == ctx.author and msg.channel == ctx.channel
+
         def reaction_check(r, u):
             return r.message == m and u == ctx.author and r.emoji == self.EMOJIS['eject']
 
@@ -555,7 +556,8 @@ class Event(commands.Cog):
 #
 
     async def getimageurl(self, message: discord.Message):
-        image = [image for image in message.attachments if 'image' in image.content_type]
+        image = [
+            image for image in message.attachments if 'image' in image.content_type]
 
         if len(image):
             return image[0].url
@@ -601,7 +603,8 @@ class Event(commands.Cog):
                 if msg.content.lower() in ['new', 'n']:
                     await self.makesystem(ctx, m)
                     systems = await self.executesql('SELECT * FROM rarity_systems')
-                    embed.description = '\n'.join(f'{systems[i][0]}. {systems[i][1]}' for i in range(0, len(systems)))
+                    embed.description = '\n'.join(
+                        f'{systems[i][0]}. {systems[i][1]}' for i in range(0, len(systems)))
                     await m.edit(embed=embed)
                 elif msg.content.lower() in ['back', 'b']:
                     return
@@ -609,7 +612,8 @@ class Event(commands.Cog):
                     i = int(msg.content)
                     await self.systemmenu(ctx, m, systems[i-1][0])
                     systems = await self.executesql('SELECT * FROM rarity_systems')
-                    embed.description = '\n'.join(f'{systems[i][0]}. {systems[i][1]}' for i in range(0, len(systems)))
+                    embed.description = '\n'.join(
+                        f'{systems[i][0]}. {systems[i][1]}' for i in range(0, len(systems)))
                     await m.edit(embed=embed)
             except ValueError:
                 await ctx.send('Please enter a number or `new`')
@@ -660,9 +664,12 @@ class Event(commands.Cog):
 
         while True:
             embed = discord.Embed(title=f'{rarityinfo[0][1]} Menu')
-            embed.add_field(name='Chance', value=f'{rarityinfo[0][2]}%', inline=False)
-            embed.add_field(name='Points First', value=rarityinfo[0][3], inline=True)
-            embed.add_field(name='Points Repeat', value=rarityinfo[0][4], inline=True)
+            embed.add_field(
+                name='Chance', value=f'{rarityinfo[0][2]}%', inline=False)
+            embed.add_field(name='Points First',
+                            value=rarityinfo[0][3], inline=True)
+            embed.add_field(name='Points Repeat',
+                            value=rarityinfo[0][4], inline=True)
 
             await m.edit(embed=embed)
 
@@ -786,7 +793,7 @@ class Event(commands.Cog):
                 p.append(points)
                 break
 
-        embed.description='Please reply with the number of points images in this tier should be worth on repeat collection'
+        embed.description = 'Please reply with the number of points images in this tier should be worth on repeat collection'
 
         await m.edit(embed=embed)
 
@@ -807,7 +814,7 @@ class Event(commands.Cog):
                 p.append(points)
                 return p
 
-    async def makechance(self, ctx, m, sysid = None):
+    async def makechance(self, ctx, m, sysid=None):
         def check(msg):
             return msg.author == ctx.author and msg.channel == ctx.channel
 
@@ -909,6 +916,7 @@ class Event(commands.Cog):
     async def event(self, ctx, *args):
         def localcheck(r, u):
             return r.message == m and u == ctx.author and (r.emoji == self.EMOJIS['0'] or r.emoji == self.EMOJIS['1'])
+
         def check(r, u):
             return r.message == m and u == ctx.author
 
@@ -981,7 +989,7 @@ class Event(commands.Cog):
                     await ctx.send('You already have an event running!')
                     return
         else:
-            #if premium server, allow them to choose an event from their made events
+            # if premium server, allow them to choose an event from their made events
             if len(await self.executesql('SELECT server_id FROM premium_users WHERE server_id = ?', (ctx.guild.id,))):
                 events = await self.executesql('SELECT event_id, name FROM events e WHERE (server_id = ?) NOT IN (SELECT active_id FROM active_events WHERE server_id = ?)', (ctx.guild.id, ctx.guild.id))
                 page = 0
@@ -1031,7 +1039,7 @@ class Event(commands.Cog):
                         return
                     except ValueError:
                         pass
-            #checks if an event is running in server
+            # checks if an event is running in server
             elif not len(await self.executesql('SELECT active_id FROM active_events WHERE server_id = ? AND event_id = ?', (ctx.guild.id, self.defaultevent))):
                 await self.executesql('INSERT INTO active_events (event_id, server_id, channel_id) VALUES (?, ?, ?)', (self.defaultevent, ctx.guild.id, ctx.channel.id))
                 newid = await self.executesql('SELECT active_id FROM active_events WHERE server_id = ? AND channel_id = ?', (ctx.guild.id, ctx.channel.id))
@@ -1121,7 +1129,6 @@ class Event(commands.Cog):
             async with session.post(url='https://api.imgur.com/3/album', json=payload) as r:
                 if r.status == 200:
                     r = r.json()
-
 
 
 def setup(bot):

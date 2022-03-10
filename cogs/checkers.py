@@ -37,4 +37,3 @@ class SpamChecker:
         for u in self.users:
             if self.users[u] - time.time() > 150:
                 del self.users[u]
-

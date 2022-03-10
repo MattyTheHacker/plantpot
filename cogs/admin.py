@@ -13,9 +13,11 @@ from cogs import checkers, leaderboard
 from cogs.inventory import Inventory
 from dotenv import load_dotenv
 
+
 class Admin(commands.Cog):
 
     version = '0.1'
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -37,7 +39,6 @@ class Admin(commands.Cog):
         await cursor.close()
         await db.close()
         return list(rows)
-
 
     @commands.command(name='load', hidden=True)
     @commands.is_owner()
@@ -76,7 +77,7 @@ class Admin(commands.Cog):
     @commands.command(name="refresh", hidden=True)
     @checkers.is_owner()
     async def refresh(self, ctx):
-        tempstr =''
+        tempstr = ''
         for f in os.listdir('./cogs/'):
             if f.endswith('.py') and not f.startswith('__'):
                 try:
@@ -105,7 +106,7 @@ class Admin(commands.Cog):
 
     @commands.command(name='tp', hidden=True)
     @checkers.is_plant_owner()
-    async def tp(self, ctx, user:discord.Member, quantity:int, *, name):
+    async def tp(self, ctx, user: discord.Member, quantity: int, *, name):
         if name.lower() in ['batch']:
             items = await self.executesql("SELECT image_id, event_id FROM images WHERE text LIKE '%stripe' AND event_id = ?", (1,))
             for stripe in items:
@@ -180,7 +181,8 @@ class Admin(commands.Cog):
         with open(f'{channelid}log.txt', 'w+') as f:
             f.write(logstr)
         with open('channellog.txt', 'a+') as f:
-            f.write(f'logged {channel.guild.name}\'s {channel.name} channel, id: {channel.id} at: {time.time()}')
+            f.write(
+                f'logged {channel.guild.name}\'s {channel.name} channel, id: {channel.id} at: {time.time()}')
         await ctx.send('Channel logged')
 
 
@@ -244,6 +246,7 @@ class die:
                             return True
                 return False
         return False
+
 
 def setup(bot):
     bot.add_cog(Admin(bot))

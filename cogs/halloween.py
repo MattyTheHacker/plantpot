@@ -249,6 +249,7 @@ class Halloween(commands.Cog):
             await self.executesql('INSERT INTO rewards (user_id, server_id, reward, start, duration) VALUES (?, ?, ?, ?, ?)',
                                   (ctx.author.id, ctx.guild.id, reward, time.time(), duration))
     # Calculates a reward
+
     def calcreward(self, treat, numsweets):
         odds = random.random()
         if treat:
@@ -274,6 +275,7 @@ class Halloween(commands.Cog):
             8: 0.01 + (dist / 5)
         }
     # Calculates whether to trick or treat
+
     def calctrickortreat(self, sweets):
         multiplier = 2 / (1 + 5.8 * math.exp(-0.25 * sweets))
         return random.random() > (0.45 / multiplier)
@@ -298,7 +300,6 @@ class Halloween(commands.Cog):
         for sweet in removals.items():
             await Inventory.removeitem(self, ctx.author.id, ctx.guild.id, sweet[0], sweet[1])
 
-
     """@commands.command(name='craftinghelp', hidden=True)
     async def crafthelp(self, ctx, m=None):
         embed = discord.Embed(title='Crafting help',
@@ -319,6 +320,7 @@ class Halloween(commands.Cog):
             await ctx.send(embed=embed) """
 
 # 10 / 1 + 300 * math.exp(-sweets)
+
 
 def setup(bot):
     bot.add_cog(Halloween(bot))

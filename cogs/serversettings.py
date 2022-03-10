@@ -11,6 +11,7 @@ from cogs import checkers
 
 class ServerSettings(commands.Cog):
     version = '0.1'
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -18,7 +19,7 @@ class ServerSettings(commands.Cog):
     async def server(self, ctx):
         if ctx.invoked_subcommand is None:
             pass
-    
+
     @server.command(name='manualsetup', hidden=True)
     @checkers.is_guild_owner()
     async def manualsetup(self, ctx):
@@ -49,7 +50,7 @@ class ServerSettings(commands.Cog):
     def setupserver(self, serverid):
         with open('cogs/servers.json', 'r') as file:
             d = json.loads(file.read())
-        d = ServerSettings.addserver(self, serverid, d);
+        d = ServerSettings.addserver(self, serverid, d)
         if d is None:
             pass
         else:
@@ -62,17 +63,17 @@ class ServerSettings(commands.Cog):
         else:
             data['servers'].append({"serverid": serverid,
                                     "store": "randomImages",
-                                    "wcid": None, #welcome-channel-id
-                                    "wm": None, #welcome-message
+                                    "wcid": None,  # welcome-channel-id
+                                    "wm": None,  # welcome-message
                                     "lbf": f"lb{serverid}",
                                     "cd": 60,
                                     "anime": None,
                                     "emoji": '\U0001F338'
                                     })
             setupjson = {"users": []}
-            with open (f'cogs/leaderboards/lb{serverid}.json', 'a+') as f:
+            with open(f'cogs/leaderboards/lb{serverid}.json', 'a+') as f:
                 json.dump(setupjson, f)
-            with open (f'cogs/leaderboards/a{serverid}.json', 'a+') as f:
+            with open(f'cogs/leaderboards/a{serverid}.json', 'a+') as f:
                 json.dump(setupjson, f)
         return data
 
@@ -103,17 +104,17 @@ class ServerSetter:
         else:
             data['servers'].append({"serverid": self.sid,
                                     "store": "randomImages",
-                                    "wcid": None, #welcome-channel-id
-                                    "wm": None, #welcome-message
+                                    "wcid": None,  # welcome-channel-id
+                                    "wm": None,  # welcome-message
                                     "lbf": f"lb{self.sid}",
                                     "cd": 60,
                                     "anime": None,
                                     "emoji": '\U0001F338'
                                     })
             setupjson = {"users": []}
-            with open (f'cogs/leaderboards/lb{self.sid}.json', 'a+') as f:
+            with open(f'cogs/leaderboards/lb{self.sid}.json', 'a+') as f:
                 json.dump(setupjson, f)
-            with open (f'cogs/leaderboards/a{self.sid}.json', 'a+') as f:
+            with open(f'cogs/leaderboards/a{self.sid}.json', 'a+') as f:
                 json.dump(setupjson, f)
         return data
 
@@ -123,6 +124,6 @@ class ServerSetter:
                 return True
         return False
 
+
 def setup(bot):
     bot.add_cog(ServerSettings(bot))
-

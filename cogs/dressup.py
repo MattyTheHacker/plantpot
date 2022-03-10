@@ -229,5 +229,6 @@ class DressUp(commands.Cog):
         base.show()
         base.save(path)
 
+
 def setup(bot):
     bot.add_cog(DressUp(bot))

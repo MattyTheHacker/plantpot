@@ -10,7 +10,6 @@ from sqlite3 import connect
 from discord.ext import commands
 
 
-
 class Reminder(commands.Cog):
 
     version = "1.1"
@@ -40,6 +39,7 @@ class Reminder(commands.Cog):
                    '\U0001F557', '\U0001F558', '\U0001F559', '\U0001F55A']
     QUARTER_EMOJIS = ['\U0001F55B', '\U0001F552', '\U0001F555', '\U0001F558']
     SEGMENT_EMOJIS = ['\U00002600', '\U0001F319']
+
     def __init__(self, bot):
 
         self.bot = bot
@@ -101,9 +101,11 @@ class Reminder(commands.Cog):
             return u.id == ctx.author.id and r.message.id == m.id
 
         if isDM:
-            reminderlist = self.executesql('SELECT reminder_id, body FROM dm_reminders WHERE user_id = ?', (ctx.author.id,))
+            reminderlist = self.executesql(
+                'SELECT reminder_id, body FROM dm_reminders WHERE user_id = ?', (ctx.author.id,))
         else:
-            reminderlist = self.executesql('SELECT guild_reminder_id, body FROM guild_reminders WHERE server_id = ?', (ctx.guild.id,))
+            reminderlist = self.executesql(
+                'SELECT guild_reminder_id, body FROM guild_reminders WHERE server_id = ?', (ctx.guild.id,))
         page = 0
 
         while True:
@@ -150,7 +152,8 @@ class Reminder(commands.Cog):
                     await m.delete()
                 await self.makereminder(ctx, isDM, m)
                 if not isDM:
-                    reminderlist = self.executesql('SELECT guild_reminder_id, body FROM guild_reminders WHERE server_id = ?', (ctx.guild.id,))
+                    reminderlist = self.executesql(
+                        'SELECT guild_reminder_id, body FROM guild_reminders WHERE server_id = ?', (ctx.guild.id,))
                     page = 0
             elif r.emoji == self.EMOJIS['eject']:
                 if isDM:
@@ -165,7 +168,8 @@ class Reminder(commands.Cog):
                         await self.dm_editreminder(ctx, reminderlist[page*10 + int(r.emoji[0])][0])
                     else:
                         await self.guild_editreminder(ctx, m, reminderlist[page*10 + int(r.emoji[0])][0])
-                        reminderlist = self.executesql('SELECT guild_reminder_id, body FROM guild_reminders WHERE server_id = ?', (ctx.guild.id,))
+                        reminderlist = self.executesql(
+                            'SELECT guild_reminder_id, body FROM guild_reminders WHERE server_id = ?', (ctx.guild.id,))
                         page = 0
 
     async def makereminder(self, ctx, isDM, m):
@@ -223,9 +227,11 @@ class Reminder(commands.Cog):
                 return
 
         if isDM:
-            self.executesql('INSERT INTO dm_reminders (user_id, body, time) VALUES (?, ?, ?)', (ctx.author.id, body, time))
+            self.executesql(
+                'INSERT INTO dm_reminders (user_id, body, time) VALUES (?, ?, ?)', (ctx.author.id, body, time))
         else:
-            self.executesql('INSERT INTO guild_reminders (server_id, channel_id, body, time) VALUES (?, ?, ?, ?)', (ctx.guild.id, channelid, body, time))
+            self.executesql('INSERT INTO guild_reminders (server_id, channel_id, body, time) VALUES (?, ?, ?, ?)',
+                            (ctx.guild.id, channelid, body, time))
 
         if isDM:
             await self.reminder(ctx)
@@ -379,8 +385,10 @@ class Reminder(commands.Cog):
                 return channel.channel_mentions[0].id
 
     async def dm_editreminder(self, ctx, reminderid):
-        emojis = ['\U0001F4DD', '\U0001F552', str(self.EMOJIS['asterisk']), str(self.EMOJIS['eject'])]
-        reminder = self.executesql('SELECT body, time FROM dm_reminders WHERE reminder_id = ?', (reminderid,))
+        emojis = ['\U0001F4DD', '\U0001F552', str(
+            self.EMOJIS['asterisk']), str(self.EMOJIS['eject'])]
+        reminder = self.executesql(
+            'SELECT body, time FROM dm_reminders WHERE reminder_id = ?', (reminderid,))
 
         def check(r, u):
             return u == ctx.message.author and r.message == m and str(r.emoji) in emojis
@@ -412,11 +420,13 @@ class Reminder(commands.Cog):
 
         if str(r.emoji) == emojis[0]:
             body = await self.makebody(ctx, True, m)
-            self.executesql('UPDATE dm_reminders SET body = ? WHERE reminder_id = ?', (body, reminderid))
+            self.executesql(
+                'UPDATE dm_reminders SET body = ? WHERE reminder_id = ?', (body, reminderid))
             return
         elif str(r.emoji) == emojis[1]:
             time = await self.maketime(ctx, True, m)
-            self.executesql('UPDATE dm_reminders SET time = ? WHERE reminder_id = ?', (time, reminderid))
+            self.executesql(
+                'UPDATE dm_reminders SET time = ? WHERE reminder_id = ?', (time, reminderid))
             return await self.reminder(ctx)
         elif str(r.emoji) == emojis[2]:
             await self.delete_dm_reminder(ctx, reminderid)
@@ -425,7 +435,8 @@ class Reminder(commands.Cog):
             return await self.reminder(ctx)
 
     async def guild_editreminder(self, ctx, m, reminderid):
-        reminder = self.executesql('SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
+        reminder = self.executesql(
+            'SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
 
         def check(r, u):
             return u == ctx.message.author and r.message == m
@@ -438,7 +449,8 @@ class Reminder(commands.Cog):
                                   description='React :zero: to edit the reminder channel\nReact :one: to edit the reminder text\nReact :two: to edit the time of the reminder\nReact :asterisk: to delete the reminder\nReact :eject: to go back',
                                   colour=ctx.guild.get_member(self.bot.user.id).colour)
 
-            embed.add_field(name='Reminder Channel', value=ctx.guild.get_channel(reminder[0][0]).mention, inline=False)
+            embed.add_field(name='Reminder Channel', value=ctx.guild.get_channel(
+                reminder[0][0]).mention, inline=False)
             embed.add_field(name='Text', value=reminder[0][1])
             t = reminder[0][2]
             if t.endswith(':0'):
@@ -451,22 +463,28 @@ class Reminder(commands.Cog):
                 r, u = await self.bot.wait_for('reaction_add', check=check, timeout=60)
             except asyncio.TimeoutError:
                 return
-            
+
             await m.remove_reaction(r, u)
 
             if r.emoji == self.EMOJIS['0']:
                 channelid = await self.makechannel(ctx, m)
-                self.executesql('UPDATE guild_reminders SET channel_id = ? WHERE guild_reminder_id = ?', (channelid, reminderid))
-                reminder = self.executesql('SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
+                self.executesql(
+                    'UPDATE guild_reminders SET channel_id = ? WHERE guild_reminder_id = ?', (channelid, reminderid))
+                reminder = self.executesql(
+                    'SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
             elif r.emoji == self.EMOJIS['1']:
                 body = await self.makebody(ctx, False, m)
-                self.executesql('UPDATE guild_reminders SET body = ? WHERE guild_reminder_id = ?', (body, reminderid))
-                reminder = self.executesql('SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
+                self.executesql(
+                    'UPDATE guild_reminders SET body = ? WHERE guild_reminder_id = ?', (body, reminderid))
+                reminder = self.executesql(
+                    'SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
             elif r.emoji == self.EMOJIS['2']:
                 time = await self.maketime(ctx, False, m)
                 await m.clear_reactions()
-                self.executesql('UPDATE guild_reminders SET time = ? WHERE guild_reminder_id = ?', (time, reminderid))
-                reminder = self.executesql('SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
+                self.executesql(
+                    'UPDATE guild_reminders SET time = ? WHERE guild_reminder_id = ?', (time, reminderid))
+                reminder = self.executesql(
+                    'SELECT channel_id, body, time FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
             elif r.emoji == self.EMOJIS['asterisk']:
                 await self.delete_guild_reminder(ctx, m, reminderid)
                 return
@@ -495,7 +513,8 @@ class Reminder(commands.Cog):
         await msg.delete()
 
         if m.content.lower() in ['y', 'yes']:
-            self.executesql('DELETE FROM dm_reminders WHERE reminder_id = ?', (reminderid,))
+            self.executesql(
+                'DELETE FROM dm_reminders WHERE reminder_id = ?', (reminderid,))
             return
         else:
             return
@@ -523,7 +542,8 @@ class Reminder(commands.Cog):
         await msg.delete()
 
         if msg.content.lower() in ['y', 'yes']:
-            self.executesql('DELETE FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
+            self.executesql(
+                'DELETE FROM guild_reminders WHERE guild_reminder_id = ?', (reminderid,))
             return
         else:
             return
@@ -531,4 +551,3 @@ class Reminder(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Reminder(bot))
-

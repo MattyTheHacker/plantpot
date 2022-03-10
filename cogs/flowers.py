@@ -60,7 +60,8 @@ class Flower(commands.Cog):
                     x = 8
                 temp = await Flower.getflower(self, ctx, x)
                 image = list(temp.items())[0]
-                rarities = {0: "ultra super amazing", 1: "legendary", 2: "mythic", 3: "epic", 4: "plant's favourite", 5: "ultra rare", 6: "rare", 7: "uncommon", 8: "common"}
+                rarities = {0: "ultra super amazing", 1: "legendary", 2: "mythic", 3: "epic",
+                            4: "plant's favourite", 5: "ultra rare", 6: "rare", 7: "uncommon", 8: "common"}
                 embed = discord.Embed()
                 embed.title = (image[0])
                 embed.set_image(url=image[1])
@@ -122,7 +123,6 @@ class Flower(commands.Cog):
                 print('restarting countdown')
                 start = time.time()
 
-
     async def getflower(self, ctx, rarity):
         with open(f'cogs/flowers.json', 'r') as file:
             d = json.loads(file.read())
@@ -152,6 +152,7 @@ class Flower(commands.Cog):
         elif rarity == 8:
             temp = d['Common']
             return random.choice(temp)
+
 
 def setup(bot):
     bot.add_cog(Flower(bot))

@@ -34,32 +34,37 @@ class Badge(commands.Cog):
                         for item in range(0, len(user['badges'])):
                             for i in user['badges'][item]:
                                 tempstr = i + "  " + user['badges'][item][i]
-                            inventory += '{0}. **'.format(item+1) + tempstr + '**\n'
+                            inventory += '{0}. **'.format(item+1) + \
+                                tempstr + '**\n'
                         embed = discord.Embed()
                         embed.title = 'your inventory'
                         embed.description = inventory
-                        embed.set_thumbnail(url=ctx.message.author.avatar_url_as())
+                        embed.set_thumbnail(
+                            url=ctx.message.author.avatar_url_as())
                         return await ctx.send(embed=embed)
                     else:
                         start = time.time()
                         temp = 0
                         f_embed = discord.Embed()
                         f_embed.title = 'your inventory'
-                        f_embed.set_thumbnail(url=ctx.message.author.avatar_url_as())
+                        f_embed.set_thumbnail(
+                            url=ctx.message.author.avatar_url_as())
                         m = await ctx.send(embed=f_embed)
                         while True:
                             if temp == len(user['badges']):
                                 temp -= (temp % 10)
                             inventory = ''
                             for item in range(temp, len(user['badges'])):
-                                inventory += f'{item+1}. **' + user['badges'][item] + '**\n'
+                                inventory += f'{item+1}. **' + \
+                                    user['badges'][item] + '**\n'
                                 temp += 1
                                 if (item + 1) % 10 == 0:
                                     temp = item + 1
                                     break
                             embed = f_embed
                             embed.description = inventory
-                            embed.set_footer(text='page {0}/{1}'.format(ceil(temp/10), ceil(len(user['badges'])/10)))
+                            embed.set_footer(
+                                text='page {0}/{1}'.format(ceil(temp/10), ceil(len(user['badges'])/10)))
                             await m.edit(embed=embed)
                             await m.add_reaction('\U00002B05')
                             await m.add_reaction('\U000027A1')
@@ -143,7 +148,6 @@ class Badge(commands.Cog):
         with open('cogs/badges.json', 'w') as file:
             json.dump(d, file)
 
-
     async def checkuser(self, uid, d):
         for user in d['users']:
             if user['userid'] == uid:
@@ -171,4 +175,4 @@ class Badge(commands.Cog):
 def setup(bot):
     bot.add_cog(Badge(bot))
 
-#i wuv you
+# i wuv you

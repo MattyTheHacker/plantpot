@@ -71,12 +71,11 @@ class Profile(commands.Cog):
                     )
                 """)
 
-    def executeSQL(self, statement, data = ()):
+    def executeSQL(self, statement, data=()):
 
         self.cursor.execute(statement, data)
         self.conn.commit()
         return self.cursor.fetchall()
-
 
     @tasks.loop(count=1)
     async def setup(self):
@@ -94,7 +93,6 @@ class Profile(commands.Cog):
         await cursor.close()
         await db.close()
         return list(rows)
-
 
     @commands.group(help='please use .profile help for more help!')
     async def profile(self, ctx):
@@ -115,7 +113,7 @@ class Profile(commands.Cog):
                        "setbadge": "`.profile setbadge [badge]` will add [badge] to your profile",
                        "rep": "`.rep [mention]` will give a rep to the user you mention, this command has a 12 hour cooldown",
                        "marry": "`.marry [mention]` will allow you to marry a user you've mentioned (with their consent)",
-                       "divorce":"`.divorce [mention]` will allow you to divorce a user you've married"}
+                       "divorce": "`.divorce [mention]` will allow you to divorce a user you've married"}
         helpstr = commandhelp.get(command)
         if helpstr is None:
             await ctx.send('please enter a valid command, type `.profile help` for a command list')
@@ -125,9 +123,8 @@ class Profile(commands.Cog):
             embed.description = helpstr
             await ctx.send(embed=embed)
 
-
     @profile.command(name='profile', help='displays your profile')
-    async def getprofile(self, ctx, at: discord.Member=None):
+    async def getprofile(self, ctx, at: discord.Member = None):
         if at is None:
             u = ctx.message.author
         else:
@@ -138,14 +135,17 @@ class Profile(commands.Cog):
             return
 
         embed = discord.Embed()
-        embed.set_author(name='{0}\'s profile'.format(u.display_name), icon_url=u.avatar_url_as())
+        embed.set_author(name='{0}\'s profile'.format(
+            u.display_name), icon_url=u.avatar_url_as())
         embed.set_thumbnail(url=u.avatar_url_as())
 
         if p['bio'] is None:
             pass
         else:
-            embed.add_field(name='\U0001F4AC Bio', value=p['bio'], inline=False)
-        embed.add_field(name='\U0001F4AD Pronouns', value=Profile.processpronouns(self, p['pronouns']), inline=False)
+            embed.add_field(name='\U0001F4AC Bio',
+                            value=p['bio'], inline=False)
+        embed.add_field(name='\U0001F4AD Pronouns', value=Profile.processpronouns(
+            self, p['pronouns']), inline=False)
         if p['badges']:
             temp = ""
             for i in p['badges']:
@@ -156,17 +156,21 @@ class Profile(commands.Cog):
         if p['sexuality'] is None:
             pass
         else:
-            embed.add_field(name='\U0001F496 Sexuality', value=p['sexuality'], inline=False)
+            embed.add_field(name='\U0001F496 Sexuality',
+                            value=p['sexuality'], inline=False)
         if len(p['married']['users']) > 0:
             mstr = ''
             for i, user in enumerate(p['married']['users']):
                 uname = await self.bot.fetch_user(p['married']['users'][i])
-                mstr +='\U00002764 {0}: {1}\n'.format(uname, p['married']['dates'][i])
-            embed.add_field(name='\U0001F48D Married to', value=mstr, inline=False)
+                mstr += '\U00002764 {0}: {1}\n'.format(
+                    uname, p['married']['dates'][i])
+            embed.add_field(name='\U0001F48D Married to',
+                            value=mstr, inline=False)
         if p['image'] is None:
             pass
         else:
-            embed.add_field(name='\U00002B50 Favourite Item', value=p['image']['desc'], inline=False)
+            embed.add_field(name='\U00002B50 Favourite Item',
+                            value=p['image']['desc'], inline=False)
             embed.set_image(url=p['image']['url'])
         embed.set_footer(text='Powered by chlorophyll')
         return await ctx.send(embed=embed)
@@ -184,12 +188,16 @@ class Profile(commands.Cog):
 
     async def makeprankedprofile(self, ctx, user):
         embed = discord.Embed()
-        embed.set_author(name=f'{user.display_name}\'s profile', icon_url=user.avatar_url_as())
+        embed.set_author(
+            name=f'{user.display_name}\'s profile', icon_url=user.avatar_url_as())
         embed.set_thumbnail(url=user.avatar_url_as())
         embed.set_image(url='https://i.imgur.com/8FqWQra.png')
-        embed.add_field(name='\U0001F4AC Bio', value="I got pranked by plant lol", inline=False)
-        embed.add_field(name='\U0001F4AD Pronouns', value="Plant/Plants", inline=False)
-        embed.add_field(name='\U0001F496 Sexuality', value="All for plant", inline=False)
+        embed.add_field(name='\U0001F4AC Bio',
+                        value="I got pranked by plant lol", inline=False)
+        embed.add_field(name='\U0001F4AD Pronouns',
+                        value="Plant/Plants", inline=False)
+        embed.add_field(name='\U0001F496 Sexuality',
+                        value="All for plant", inline=False)
         embed.add_field(name='\U0001F3C6 Total Points', value='None lol')
         embed.add_field(name='\U0001F4A0 Rep', value="Also none lol")
 
@@ -223,6 +231,7 @@ class Profile(commands.Cog):
         else:
             await ctx.send(f'{user.mention}! {usr.mention} wants to marry you! do you accept? '
                            '[(y)es/(n)o]')
+
             def check(m):
                 return m.channel == ctx.channel and m.author == user
 
@@ -231,11 +240,13 @@ class Profile(commands.Cog):
                     m = await self.bot.wait_for('message', check=check, timeout=60)
                     if m.content.lower() in ['y', 'yes']:
                         p0['married']['users'].append(user.id)
-                        p0['married']['dates'].append(date.today().strftime('%Y-%m-%d'))
+                        p0['married']['dates'].append(
+                            date.today().strftime('%Y-%m-%d'))
                         p0.update({"married": {"users": p0['married']['users'],
                                                "dates": p0['married']['dates']}})
                         p1['married']['users'].append(usr.id)
-                        p1['married']['dates'].append(date.today().strftime('%Y-%m-%d'))
+                        p1['married']['dates'].append(
+                            date.today().strftime('%Y-%m-%d'))
                         p1.update({"married": {"users": p1['married']['users'],
                                                "dates": p1['married']['dates']}})
                         for i, u in enumerate(d['users']):
@@ -249,7 +260,7 @@ class Profile(commands.Cog):
                     if m.content.lower() in ['n', 'no']:
                         return await ctx.send('oh no! rejection! better luck next time!')
             except asyncio.TimeoutError:
-                    return await ctx.send(f'uh oh, it seems like {user.mention} is busy, try again later!')
+                return await ctx.send(f'uh oh, it seems like {user.mention} is busy, try again later!')
 
     @commands.command(name='divorce', help='lets you divorce another user')
     async def divorce(self, ctx, user: discord.Member):
@@ -426,7 +437,8 @@ class Profile(commands.Cog):
                 if user['userid'] == u.id:
                     for im in user['images']:
                         if im['name'].lower() == image.lower():
-                            temp = {"image": {"url": im['url'], "desc": im['name']}}
+                            temp = {
+                                "image": {"url": im['url'], "desc": im['name']}}
                             break
             for i, user in enumerate(p['users']):
                 if user['userid'] == u.id:
@@ -526,13 +538,16 @@ class Profile(commands.Cog):
 
 # -------------- Error handling -------------- #
 
+
     @help.error
     async def helperror(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             embed = discord.Embed()
             embed.title = 'please format this command as .profile help [command] for more information'
-            embed.add_field(name='Please format these commands as .profile [command]', value='**setbio**: sets your bio \n**setpronouns**: sets your pronouns \n**setsexuality**: sets your sexuality \n**setimage**: sets a display image\n**setbadge**: sets a badge to profile', inline=False)
-            embed.add_field(name='Please format these commands as they are', value='**profile**: posts your profile\n**rep**: gifts a rep to another user\n**marry**: lets you marry another user\n**divorce**: lets you divorce a user you\'ve married', inline=False)
+            embed.add_field(name='Please format these commands as .profile [command]',
+                            value='**setbio**: sets your bio \n**setpronouns**: sets your pronouns \n**setsexuality**: sets your sexuality \n**setimage**: sets a display image\n**setbadge**: sets a badge to profile', inline=False)
+            embed.add_field(name='Please format these commands as they are',
+                            value='**profile**: posts your profile\n**rep**: gifts a rep to another user\n**marry**: lets you marry another user\n**divorce**: lets you divorce a user you\'ve married', inline=False)
             await ctx.send(embed=embed)
 
     @setpronouns.error
@@ -585,23 +600,22 @@ class Profile(commands.Cog):
 # ----  Profile Plant Bot Commands  ----
 # ---------------  v1.0  ---------------
 
-
     @commands.command(
-        name = "profilewizard",
-        aliases = ["pwiz", "pw"],
+        name="profilewizard",
+        aliases=["pwiz", "pw"],
 
-        brief = "Create and edit your profile.",
-        description = "Create and edit your profile! Add fields and showcase badges!",
+        brief="Create and edit your profile.",
+        description="Create and edit your profile! Add fields and showcase badges!",
     )
     async def profileWizard(self, ctx):
 
         embed = discord.Embed(
-            title = "Profile Wizard",
-            description = "Loading...",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard",
+            description="Loading...",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        msg = await ctx.send(embed = embed)
+        msg = await ctx.send(embed=embed)
 
         for emoji in self.WIZARD_EMOJIS.values():
             await msg.add_reaction(emoji)
@@ -609,12 +623,12 @@ class Profile(commands.Cog):
         await self.mainMenu(ctx, msg)
 
         embed = discord.Embed(
-            title = "Profile Wizard",
-            description = "Finished.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard",
+            description="Finished.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
     async def mainMenu(self, ctx, msg):
 
@@ -629,25 +643,27 @@ class Profile(commands.Cog):
         while True:
 
             embed = discord.Embed(
-                title = "Profile Wizard - Edit your profile.",
-                description = "React with a number to select a field.\nReact with :new: to create a new field.\nReact with :record_button: to edit your bio.\nReact with :asterisk: to reset your profile.\nReact with :regional_indicator_p: to preview your profile.\nReact with :eject: to quit.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Edit your profile.",
+                description="React with a number to select a field.\nReact with :new: to create a new field.\nReact with :record_button: to edit your bio.\nReact with :asterisk: to reset your profile.\nReact with :regional_indicator_p: to preview your profile.\nReact with :eject: to quit.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
             if (len(availableFields)):
                 embed.add_field(
-                    name = "Available Fields ({}/{})".format(len(availableFields), "5"),
-                    value = "\n".join(self.WIZARD_EMOJIS[str(i)] + " " + str(availableFields[i][2]) for i in range(0, len(availableFields)))
+                    name="Available Fields ({}/{})".format(
+                        len(availableFields), "5"),
+                    value="\n".join(self.WIZARD_EMOJIS[str(
+                        i)] + " " + str(availableFields[i][2]) for i in range(0, len(availableFields)))
                 )
             else:
                 embed.add_field(
-                    name = "Available Fields (0/{})".format("5"),
-                    value = "None",
+                    name="Available Fields (0/{})".format("5"),
+                    value="None",
                 )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -712,15 +728,15 @@ class Profile(commands.Cog):
 
         if (fieldCount >= 2 and not premiumUser):
             embed = discord.Embed(
-                title = "Profile Wizard - Add a field.",
-                description = "You need premium to have more than 2 fields!\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a field.",
+                description="You need premium to have more than 2 fields!\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -728,15 +744,15 @@ class Profile(commands.Cog):
 
         elif (fieldCount >= 5 and premiumUser):
             embed = discord.Embed(
-                title = "Profile Wizard - Add a field.",
-                description = "You cannot have more than 5 fields!\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a field.",
+                description="You cannot have more than 5 fields!\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -744,17 +760,17 @@ class Profile(commands.Cog):
 
         else:
             embed = discord.Embed(
-                title = "Profile Wizard - Add a field.",
-                description = "React with :zero: to create a text field.\nReact with :one: to create a badge showcase.\nReact with :two: to create an image showcase.\nReact with :three: to create a custom colour field.\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a field.",
+                description="React with :zero: to create a text field.\nReact with :one: to create a badge showcase.\nReact with :two: to create an image showcase.\nReact with :three: to create a custom colour field.\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             while True:
 
                 try:
-                    reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                    reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
                 except asyncio.TimeoutError:
                     return
                 await msg.remove_reaction(reaction, user)
@@ -791,30 +807,30 @@ class Profile(commands.Cog):
             return ctx.author.id == msg.author.id and ctx.channel.id == msg.channel.id and len(msg.content) <= 512
 
         embed = discord.Embed(
-            title = "Profile Wizard - Add a text field.",
-            description = "Reply with the heading of the text field. (Max 32 characters)\nWait 60s to cancel.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Add a text field.",
+            description="Reply with the heading of the text field. (Max 32 characters)\nWait 60s to cancel.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            heading = await self.bot.wait_for("message", timeout = 60, check = heading_check)
+            heading = await self.bot.wait_for("message", timeout=60, check=heading_check)
         except asyncio.TimeoutError:
             return
         await heading.delete()
         heading = heading.content
 
         embed = discord.Embed(
-            title = "Profile Wizard - Add a text field.",
-            description = "Reply with the content of the text field. (Max 512 characters)\nWait 300s to cancel.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Add a text field.",
+            description="Reply with the content of the text field. (Max 512 characters)\nWait 300s to cancel.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            content = await self.bot.wait_for("message", timeout = 300, check = content_check)
+            content = await self.bot.wait_for("message", timeout=300, check=content_check)
         except asyncio.TimeoutError:
             return
         await content.delete()
@@ -838,16 +854,16 @@ class Profile(commands.Cog):
         while True:
 
             embed = discord.Embed(
-                title = "Profile Wizard - Edit a text field.",
-                description = "React with :zero: to change the heading.\nReact with :one: to change the content.\nReact with :asterisk: to delete the field.\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Edit a text field.",
+                description="React with :zero: to change the heading.\nReact with :one: to change the content.\nReact with :asterisk: to delete the field.\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            embed.add_field(name = textField[0], value = textField[1])
-            await msg.edit(embed = embed)
+            embed.add_field(name=textField[0], value=textField[1])
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -856,7 +872,8 @@ class Profile(commands.Cog):
                 return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["asterisk"]):
-                if (await self.deleteTextField(ctx, msg, fieldId)): return
+                if (await self.deleteTextField(ctx, msg, fieldId)):
+                    return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["0"]):
                 await self.editTextFieldHeading(ctx, msg, fieldId)
@@ -883,16 +900,16 @@ class Profile(commands.Cog):
         """, (fieldId,))[0][0]
 
         embed = discord.Embed(
-            title = "Profile Wizard - Edit a text field.",
-            description = "Reply with the new heading of the text field. (Max 32 characters)\nWait 60s to cancel.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Edit a text field.",
+            description="Reply with the new heading of the text field. (Max 32 characters)\nWait 60s to cancel.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        embed.add_field(name = "Current Heading", value = currentHeading)
-        await msg.edit(embed = embed)
+        embed.add_field(name="Current Heading", value=currentHeading)
+        await msg.edit(embed=embed)
 
         try:
-            heading = await self.bot.wait_for("message", timeout = 60, check = heading_check)
+            heading = await self.bot.wait_for("message", timeout=60, check=heading_check)
         except asyncio.TimeoutError:
             return
         await heading.delete()
@@ -915,16 +932,16 @@ class Profile(commands.Cog):
         """, (fieldId,))[0][0]
 
         embed = discord.Embed(
-            title = "Profile Wizard - Edit a text field.",
-            description = "Reply with the new content of the text field. (Max 512 characters)\nWait 60s to cancel.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Edit a text field.",
+            description="Reply with the new content of the text field. (Max 512 characters)\nWait 60s to cancel.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        embed.add_field(name = "Current Content", value = currentContent)
-        await msg.edit(embed = embed)
+        embed.add_field(name="Current Content", value=currentContent)
+        await msg.edit(embed=embed)
 
         try:
-            content = await self.bot.wait_for("message", timeout = 60, check = content_check)
+            content = await self.bot.wait_for("message", timeout=60, check=content_check)
         except asyncio.TimeoutError:
             return
         await content.delete()
@@ -942,15 +959,15 @@ class Profile(commands.Cog):
             return ctx.author.id == msg.author.id and ctx.channel.id == msg.channel.id
 
         embed = discord.Embed(
-            title = "Profile Wizard - Delete a text field.",
-            description = "Are you sure? (Y/N)\n",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Delete a text field.",
+            description="Are you sure? (Y/N)\n",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            confirmation = await self.bot.wait_for("message", timeout = 60, check = check)
+            confirmation = await self.bot.wait_for("message", timeout=60, check=check)
         except asyncio.TimeoutError:
             return False
         await confirmation.delete()
@@ -974,15 +991,15 @@ class Profile(commands.Cog):
             return r.message == msg and u == ctx.author and r.emoji == self.WIZARD_EMOJIS['eject']
 
         embed = discord.Embed(
-            title = "Profile Wizard - Add a badge showcase.",
-            description = "Reply with the name of the badge you want to showcase.\nWait 60s to go back.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Add a badge showcase.",
+            description="Reply with the name of the badge you want to showcase.\nWait 60s to go back.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            badge = await self.bot.wait_for("message", timeout = 300, check = badge_check)
+            badge = await self.bot.wait_for("message", timeout=300, check=badge_check)
         except asyncio.TimeoutError:
             return False
         await badge.delete()
@@ -1007,15 +1024,15 @@ class Profile(commands.Cog):
 
         else:
             embed = discord.Embed(
-                title = "Profile Wizard - Add a badge showcase.",
-                description = "You don't have that badge!\nReact with :eject: or wait 60s to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a badge showcase.",
+                description="You don't have that badge!\nReact with :eject: or wait 60s to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return False
             await msg.remove_reaction(reaction, user)
@@ -1034,16 +1051,16 @@ class Profile(commands.Cog):
         while True:
 
             embed = discord.Embed(
-                title = "Profile Wizard - Edit a badge showcase.",
-                description = "React with :zero: to change the badge.\nReact with :asterisk: to delete the showcase.\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Edit a badge showcase.",
+                description="React with :zero: to change the badge.\nReact with :asterisk: to delete the showcase.\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            embed.add_field(name = "Badge", value = badge)
-            await msg.edit(embed = embed)
+            embed.add_field(name="Badge", value=badge)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -1052,7 +1069,8 @@ class Profile(commands.Cog):
                 return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["asterisk"]):
-                if (await self.deleteBadgeField(ctx, msg, fieldId)): return
+                if (await self.deleteBadgeField(ctx, msg, fieldId)):
+                    return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["0"]):
                 await self.editBadgeFieldBadge(ctx, msg, fieldId)
@@ -1075,16 +1093,16 @@ class Profile(commands.Cog):
         """, (fieldId,))[0][0]
 
         embed = discord.Embed(
-            title = "Profile Wizard - Edit a badge showcase.",
-            description = "Reply with the name of the badge you want to showcase.\nWait 60s to go back.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Edit a badge showcase.",
+            description="Reply with the name of the badge you want to showcase.\nWait 60s to go back.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        embed.add_field(name = "currentBadge", value = badge)
-        await msg.edit(embed = embed)
+        embed.add_field(name="currentBadge", value=badge)
+        await msg.edit(embed=embed)
 
         try:
-            badge = await self.bot.wait_for("message", timeout = 300, check = badge_check)
+            badge = await self.bot.wait_for("message", timeout=300, check=badge_check)
         except asyncio.TimeoutError:
             return False
         await badge.delete()
@@ -1105,15 +1123,15 @@ class Profile(commands.Cog):
 
         else:
             embed = discord.Embed(
-                title = "Profile Wizard - Add a badge showcase.",
-                description = "You don't have that badge!\nReact with :eject: or wait 60s to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a badge showcase.",
+                description="You don't have that badge!\nReact with :eject: or wait 60s to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -1124,15 +1142,15 @@ class Profile(commands.Cog):
             return ctx.author.id == msg.author.id and ctx.channel.id == msg.channel.id
 
         embed = discord.Embed(
-            title = "Profile Wizard - Delete a badge showcase.",
-            description = "Are you sure? (Y/N)\n",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Delete a badge showcase.",
+            description="Are you sure? (Y/N)\n",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            confirmation = await self.bot.wait_for("message", timeout = 60, check = check)
+            confirmation = await self.bot.wait_for("message", timeout=60, check=check)
         except asyncio.TimeoutError:
             return False
         await confirmation.delete()
@@ -1147,7 +1165,7 @@ class Profile(commands.Cog):
 
         return True
 
-    async def newImageField(self, ctx, msg, fieldId = 0):
+    async def newImageField(self, ctx, msg, fieldId=0):
 
         def check(reaction, user):
             return ctx.author.id == user.id and msg.id == reaction.message.id
@@ -1162,30 +1180,30 @@ class Profile(commands.Cog):
 
         if (hasField):
             embed = discord.Embed(
-                title = "Profile Wizard - Add an image showcase.",
-                description = "You can't have more than 1 image!\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add an image showcase.",
+                description="You can't have more than 1 image!\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
             return
 
         embed = discord.Embed(
-            title = "Profile Wizard - Add an image showcase.",
-            description = "Reply with the name of the image you want to showcase.\nWait 60s to go back.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Add an image showcase.",
+            description="Reply with the name of the image you want to showcase.\nWait 60s to go back.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            image = await self.bot.wait_for("message", timeout = 300, check = image_check)
+            image = await self.bot.wait_for("message", timeout=300, check=image_check)
         except asyncio.TimeoutError:
             return False
         await image.delete()
@@ -1222,7 +1240,8 @@ class Profile(commands.Cog):
                 if user['userid'] == ctx.author.id:
                     for im in user['images']:
                         if im['name'].lower() == image.lower():
-                            temp = {"image": {"url": im['url'], "desc": im['name']}}
+                            temp = {
+                                "image": {"url": im['url'], "desc": im['name']}}
                             break
 
             image = temp["image"]["url"]
@@ -1232,15 +1251,15 @@ class Profile(commands.Cog):
 
         else:
             embed = discord.Embed(
-                title = "Profile Wizard - Add an image showcase.",
-                description = "You don't have that image!\nReact with :eject: or wait 60s to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add an image showcase.",
+                description="You don't have that image!\nReact with :eject: or wait 60s to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return False
             await msg.remove_reaction(reaction, user)
@@ -1277,16 +1296,16 @@ class Profile(commands.Cog):
         while True:
 
             embed = discord.Embed(
-                title = "Profile Wizard - Edit an image showcase.",
-                description = "React with :zero: to change the image.\nReact with :asterisk: to delete the showcase.\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Edit an image showcase.",
+                description="React with :zero: to change the image.\nReact with :asterisk: to delete the showcase.\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            embed.set_image(url = image)
-            await msg.edit(embed = embed)
+            embed.set_image(url=image)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -1295,7 +1314,8 @@ class Profile(commands.Cog):
                 return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["asterisk"]):
-                if (await self.deleteImageField(ctx, msg, fieldId)): return
+                if (await self.deleteImageField(ctx, msg, fieldId)):
+                    return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["0"]):
                 await self.newImageField(ctx, msg, fieldId)
@@ -1310,15 +1330,15 @@ class Profile(commands.Cog):
             return ctx.author.id == msg.author.id and ctx.channel.id == msg.channel.id
 
         embed = discord.Embed(
-            title = "Profile Wizard - Delete an image showcase.",
-            description = "Are you sure? (Y/N)\n",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Delete an image showcase.",
+            description="Are you sure? (Y/N)\n",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            confirmation = await self.bot.wait_for("message", timeout = 60, check = check)
+            confirmation = await self.bot.wait_for("message", timeout=60, check=check)
         except asyncio.TimeoutError:
             return False
         await confirmation.delete()
@@ -1333,7 +1353,7 @@ class Profile(commands.Cog):
 
         return True
 
-    async def newColourField(self, ctx, msg, fieldId = 0):
+    async def newColourField(self, ctx, msg, fieldId=0):
 
         def check(reaction, user):
             return ctx.author.id == user.id and msg.id == reaction.message.id
@@ -1353,15 +1373,15 @@ class Profile(commands.Cog):
 
         if (hasField):
             embed = discord.Embed(
-                title = "Profile Wizard - Add a custom colour.",
-                description = "You can't have more than 1 custom colour!\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a custom colour.",
+                description="You can't have more than 1 custom colour!\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -1369,31 +1389,30 @@ class Profile(commands.Cog):
 
         elif (hasPremium):
             embed = discord.Embed(
-                title = "Profile Wizard - Add a custom colour.",
-                description = "You need premium to set a custom colour!\nReact with :eject: to go back.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Profile Wizard - Add a custom colour.",
+                description="You need premium to set a custom colour!\nReact with :eject: to go back.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
             return
 
-
         embed = discord.Embed(
-            title = "Profile Wizard - Add a custom colour.",
-            description = "Reply with the RGB code of the colour. (e.g #FFF or #FFFFFF)\nWait 60s to go back.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Add a custom colour.",
+            description="Reply with the RGB code of the colour. (e.g #FFF or #FFFFFF)\nWait 60s to go back.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            colour = await self.bot.wait_for("message", timeout = 300, check = colour_check)
+            colour = await self.bot.wait_for("message", timeout=300, check=colour_check)
         except asyncio.TimeoutError:
             return False
         await colour.delete()
@@ -1434,15 +1453,15 @@ class Profile(commands.Cog):
         while True:
 
             embed = discord.Embed(
-                title = "Profile Wizard - Edit a custom colour.",
-                description = "React with :zero: to change the image.\nReact with :asterisk: to delete this field.\nReact with :eject: to go back.",
-                colour = discord.Colour(int(colour, 16)),
-                timestamp = datetime.now(),
+                title="Profile Wizard - Edit a custom colour.",
+                description="React with :zero: to change the image.\nReact with :asterisk: to delete this field.\nReact with :eject: to go back.",
+                colour=discord.Colour(int(colour, 16)),
+                timestamp=datetime.now(),
             )
-            await msg.edit(embed = embed)
+            await msg.edit(embed=embed)
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
@@ -1451,7 +1470,8 @@ class Profile(commands.Cog):
                 return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["asterisk"]):
-                if (await self.deleteColourField(ctx, msg, fieldId)): return
+                if (await self.deleteColourField(ctx, msg, fieldId)):
+                    return
 
             elif (reaction.emoji == self.WIZARD_EMOJIS["0"]):
                 await self.newColourField(ctx, msg, fieldId)
@@ -1466,15 +1486,15 @@ class Profile(commands.Cog):
             return ctx.author.id == msg.author.id and ctx.channel.id == msg.channel.id
 
         embed = discord.Embed(
-            title = "Profile Wizard - Delete a custom colour.",
-            description = "Are you sure? (Y/N)\n",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Delete a custom colour.",
+            description="Are you sure? (Y/N)\n",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            confirmation = await self.bot.wait_for("message", timeout = 60, check = check)
+            confirmation = await self.bot.wait_for("message", timeout=60, check=check)
         except asyncio.TimeoutError:
             return False
         await confirmation.delete()
@@ -1500,20 +1520,21 @@ class Profile(commands.Cog):
         """, (ctx.author.id,))
 
         embed = discord.Embed(
-            title = "Profile Wizard - Edit your bio.",
-            description = "Reply with the{} content of the bio. (Max 512 characters)\nWait 300 to cancel.".format(" new" if len(bio) else ""),
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Edit your bio.",
+            description="Reply with the{} content of the bio. (Max 512 characters)\nWait 300 to cancel.".format(
+                " new" if len(bio) else ""),
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
         if (len(bio)):
             embed.add_field(
-                name = "Current Bio",
-                value = bio[0][1]
+                name="Current Bio",
+                value=bio[0][1]
             )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            content = await self.bot.wait_for("message", timeout = 300, check = bio_check)
+            content = await self.bot.wait_for("message", timeout=300, check=bio_check)
         except asyncio.TimeoutError:
             return
         await content.delete()
@@ -1538,15 +1559,15 @@ class Profile(commands.Cog):
             return ctx.author.id == msg.author.id and ctx.channel.id == msg.channel.id
 
         embed = discord.Embed(
-            title = "Profile Wizard - Reset your profile.",
-            description = "Are you sure? (Y/N)\n",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard - Reset your profile.",
+            description="Are you sure? (Y/N)\n",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        await msg.edit(embed = embed)
+        await msg.edit(embed=embed)
 
         try:
-            confirmation = await self.bot.wait_for("message", timeout = 60, check = check)
+            confirmation = await self.bot.wait_for("message", timeout=60, check=check)
         except asyncio.TimeoutError:
             return False
         await confirmation.delete()
@@ -1564,14 +1585,14 @@ class Profile(commands.Cog):
         def preview_check(reaction, user):
             return ctx.author.id == user.id and msg.id == reaction.message.id and reaction.emoji == self.WIZARD_EMOJIS["eject"]
 
-        await msg.edit(embed = await self.generateProfileEmbed(ctx, ctx.author.id, preview = True))
+        await msg.edit(embed=await self.generateProfileEmbed(ctx, ctx.author.id, preview=True))
         try:
-            reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = preview_check)
+            reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=preview_check)
             await msg.remove_reaction(reaction, user)
         except asyncio.TimeoutError:
             pass
 
-    async def generateProfileEmbed(self, ctx, userId, preview = False):
+    async def generateProfileEmbed(self, ctx, userId, preview=False):
 
         fields = self.executeSQL("""
             SELECT type, name, data FROM fields
@@ -1593,10 +1614,10 @@ class Profile(commands.Cog):
                 colour = discord.Colour(int(field[2], 16))
 
         embed = discord.Embed(
-            title = "{}'s Profile{}".format((await self.bot.fetch_user(userId)).name, " Preview (React with :eject: to go back)" if preview else "!"),
-            description = ":regional_indicator_f: to see friends.\n\n" + description,
-            colour = colour,
-            timestamp = datetime.now(),
+            title="{}'s Profile{}".format((await self.bot.fetch_user(userId)).name, " Preview (React with :eject: to go back)" if preview else "!"),
+            description=":regional_indicator_f: to see friends.\n\n" + description,
+            colour=colour,
+            timestamp=datetime.now(),
         )
 
         with open('cogs/profiles.json', 'r') as file:
@@ -1607,21 +1628,23 @@ class Profile(commands.Cog):
             if user['userid'] == userId:
                 userData = user
 
-        embed.add_field(name = "Points", value = "0" if userData == None else userData["points"])
-        embed.add_field(name = "Rep", value = "0" if userData == None else userData["rep"])
+        embed.add_field(name="Points", value="0" if userData ==
+                        None else userData["points"])
+        embed.add_field(name="Rep", value="0" if userData ==
+                        None else userData["rep"])
 
         if (len(marriages)):
-            embed.add_field(name = "Married To", value = "\n".join([(await self.bot.fetch_user(userBID[0])).mention for userBID in marriages]))
+            embed.add_field(name="Married To", value="\n".join([(await self.bot.fetch_user(userBID[0])).mention for userBID in marriages]))
 
         for field in fields:
             if (field[0] == 1 or field[0] == 2):
                 embed.add_field(
-                    name = field[1],
-                    value = field[2],
-                    inline = False,
+                    name=field[1],
+                    value=field[2],
+                    inline=False,
                 )
             elif (field[0] == 3):
-                embed.set_image(url = field[2])
+                embed.set_image(url=field[2])
 
         return embed
 
@@ -1636,10 +1659,10 @@ class Profile(commands.Cog):
             colour = discord.Colour(int(hasColourField[0][0], 16))
 
         embed = discord.Embed(
-            title = "{}'s Friends!".format((await self.bot.fetch_user(userId)).name),
-            description = ":regional_indicator_f: to go back to the profile.",
-            colour = colour,
-            timestamp = datetime.now(),
+            title="{}'s Friends!".format((await self.bot.fetch_user(userId)).name),
+            description=":regional_indicator_f: to go back to the profile.",
+            colour=colour,
+            timestamp=datetime.now(),
         )
 
         relationships = self.executeSQL("""
@@ -1656,18 +1679,19 @@ class Profile(commands.Cog):
             elif (relationship[1] == 1):
                 bf += (await self.bot.fetch_user(relationship[0])).mention + "\n"
 
-        embed.add_field(name = "Best Friends", value = bf if bf else "None", inline = False)
-        embed.add_field(name = "Friends", value = f if f else "None", inline = False)
+        embed.add_field(name="Best Friends",
+                        value=bf if bf else "None", inline=False)
+        embed.add_field(name="Friends", value=f if f else "None", inline=False)
 
         return embed
 
     @commands.command(
-        name = "testprofile",
+        name="testprofile",
 
-        usage = "@User",
+        usage="@User",
 
-        brief = "View someone's profile!",
-        description = "View all about a user!",
+        brief="View someone's profile!",
+        description="View all about a user!",
     )
     async def testprofile(self, ctx):
 
@@ -1677,12 +1701,12 @@ class Profile(commands.Cog):
             userId = ctx.message.mentions[0].id
 
         embed = discord.Embed(
-            title = "Profile Wizard",
-            description = "Loading...",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="Profile Wizard",
+            description="Loading...",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
-        msg = await ctx.send(embed = embed)
+        msg = await ctx.send(embed=embed)
         await msg.add_reaction("🇫")
 
         def check(reaction, user):
@@ -1690,27 +1714,27 @@ class Profile(commands.Cog):
 
         while True:
 
-            await msg.edit(embed = await self.generateProfileEmbed(ctx, userId))
+            await msg.edit(embed=await self.generateProfileEmbed(ctx, userId))
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 300, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=300, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
 
-            await msg.edit(embed = await self.generateFriendsEmbed(ctx, userId))
+            await msg.edit(embed=await self.generateFriendsEmbed(ctx, userId))
 
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout = 60, check = check)
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
             except asyncio.TimeoutError:
                 return
             await msg.remove_reaction(reaction, user)
 
     @commands.command(
-        name = "friend",
+        name="friend",
 
-        brief = "Friend another user!",
-        description = "Friend someone! (Use it again to best friend them!)",
+        brief="Friend another user!",
+        description="Friend someone! (Use it again to best friend them!)",
     )
     async def friend(self, ctx):
 
@@ -1746,9 +1770,9 @@ class Profile(commands.Cog):
                     msg = await ctx.send("{} do you want to be best friends with {}? (Y/N)".format(member.mention, ctx.author.mention))
 
                     try:
-                        accept = await self.bot.wait_for("message", timeout = 60, check = check)
+                        accept = await self.bot.wait_for("message", timeout=60, check=check)
                     except asyncio.TimeoutError:
-                        await msg.edit(content = "I guess {} didn't want to be best friends with you. <:sadplant:828679930450673714>".format(member.mention))
+                        await msg.edit(content="I guess {} didn't want to be best friends with you. <:sadplant:828679930450673714>".format(member.mention))
                         continue
 
                     if (accept.content.lower()[0] == "y"):
@@ -1776,14 +1800,13 @@ class Profile(commands.Cog):
                                 VALUES (?, ?, 1)
                             """, (member.id, ctx.author.id))
 
-                        await msg.edit(content = "{} and {} are now best friends! <:plantlove:829795421369925681>".format(ctx.author.mention, member.mention))
+                        await msg.edit(content="{} and {} are now best friends! <:plantlove:829795421369925681>".format(ctx.author.mention, member.mention))
 
                     else:
-                        await msg.edit(content = "{} didn't want to be best friends with you. <:sadplant:828679930450673714>".format(member.mention))
-
+                        await msg.edit(content="{} didn't want to be best friends with you. <:sadplant:828679930450673714>".format(member.mention))
 
             elif (len(relationship) and relationship[0][1] == 1):
-                await ctx.send(content = "You are already best friends with {}! <:plantlove:829795421369925681>".format(member.mention))
+                await ctx.send(content="You are already best friends with {}! <:plantlove:829795421369925681>".format(member.mention))
 
             elif (not len(relationship)):
                 self.executeSQL("""
@@ -1794,10 +1817,10 @@ class Profile(commands.Cog):
                 await ctx.send("You are now friends with {}! <:plantlove:829795421369925681>".format(member.mention))
 
     @commands.command(
-        name = "unfriend",
+        name="unfriend",
 
-        brief = "Unfriend another user.",
-        description = "Unfriend someone!",
+        brief="Unfriend another user.",
+        description="Unfriend someone!",
     )
     async def unfriend(self, ctx):
 
@@ -1838,10 +1861,10 @@ class Profile(commands.Cog):
                 await ctx.send("You don't have a friendship with {}. <:sadplant:828679930450673714>".format(member.mention))
 
     @commands.command(
-        name = "testmarry",
+        name="testmarry",
 
-        brief = "Marry another user!",
-        description = "Marry someone!",
+        brief="Marry another user!",
+        description="Marry someone!",
     )
     async def marry(self, ctx):
 
@@ -1877,9 +1900,9 @@ class Profile(commands.Cog):
                     msg = await ctx.send("{} do you want to marry {}? (Y/N)".format(member.mention, ctx.author.mention))
 
                     try:
-                        accept = await self.bot.wait_for("message", timeout = 60, check = check)
+                        accept = await self.bot.wait_for("message", timeout=60, check=check)
                     except asyncio.TimeoutError:
-                        await msg.edit(content = "I guess {} didn't want to marry you. <:sadplant:828679930450673714>".format(member.mention))
+                        await msg.edit(content="I guess {} didn't want to marry you. <:sadplant:828679930450673714>".format(member.mention))
                         continue
 
                     if (accept.content.lower()[0] == "y"):
@@ -1894,19 +1917,19 @@ class Profile(commands.Cog):
                             VALUES (?, ?, 1)
                         """, (member.id, ctx.author.id))
 
-                        await msg.edit(content = "{} and {} are now married! <:plantlove:829795421369925681>".format(ctx.author.mention, member.mention))
+                        await msg.edit(content="{} and {} are now married! <:plantlove:829795421369925681>".format(ctx.author.mention, member.mention))
 
                     else:
-                        await msg.edit(content = "{} didn't want to marry you. <:sadplant:828679930450673714>".format(member.mention))
+                        await msg.edit(content="{} didn't want to marry you. <:sadplant:828679930450673714>".format(member.mention))
 
             else:
                 await ctx.send("You are already married to {}! <:plantlove:829795421369925681>".format(member.mention))
 
     @commands.command(
-        name = "testdivorce",
+        name="testdivorce",
 
-        brief = "Divorce another user.",
-        description = "Divorce someone!",
+        brief="Divorce another user.",
+        description="Divorce someone!",
     )
     async def divorce(self, ctx):
 
@@ -1937,6 +1960,7 @@ class Profile(commands.Cog):
 
             else:
                 await ctx.send("You aren't married to {}. <:sadplant:828679930450673714>".format(member.mention))
+
 
 def setup(bot):
     bot.add_cog(Profile(bot))

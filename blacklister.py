@@ -11,6 +11,7 @@ def checkanime(id):
         return False
     return True
 
+
 def mainloop(low, high):
     blacklist_character = []
     blacklist_anime = []
@@ -48,4 +49,3 @@ def mainloop(low, high):
 
 
 mainloop(1, 10)
-

@@ -1,4 +1,4 @@
-#helpers.py
+# helpers.py
 
 import discord
 import random
@@ -9,6 +9,7 @@ from aiosqlite import connect
 from cogs.event import Event
 from cogs.inventory import Inventory
 from cogs.leaderboard import Leaderboard
+
 
 class EventChecker:
     SPOOKY_REPLIES = ["It's a boo-tiful day to get points!",
@@ -42,6 +43,7 @@ class EventChecker:
                       "I don't be-leaf my eyes...",
                       "You can skele-run, but you can't hide...",
                       "That's one for the BOOooks"]
+
     def __init__(self, bot):
         self.bot = bot
         self.setup.start()
@@ -134,6 +136,7 @@ class EventChecker:
                 rewardslist.append(reward[0])
         return rewardslist
 
+
 class ReactionChecker:
     def __init__(self, bot):
         self.bot = bot
@@ -161,7 +164,8 @@ class ReactionChecker:
         if not len(manager):
             return
         rolelist = await self.executesql('SELECT role_id, emoji FROM roles WHERE manager_id = ?', (manager[0][0],))
-        role = [role for role in rolelist if str(role[1]) == str(payload.emoji)]
+        role = [role for role in rolelist if str(
+            role[1]) == str(payload.emoji)]
         if len(role):
             role = self.bot.get_guild(payload.guild_id).get_role(role[0][0])
             try:
@@ -175,7 +179,8 @@ class ReactionChecker:
         if not len(manager):
             return
         rolelist = await self.executesql('SELECT role_id, emoji FROM roles WHERE manager_id = ?', (manager[0][0],))
-        role = [role for role in rolelist if str(role[1]) == str(payload.emoji)]
+        role = [role for role in rolelist if str(
+            role[1]) == str(payload.emoji)]
         member = await self.bot.get_guild(payload.guild_id).fetch_member(payload.user_id)
         if len(role):
             role = self.bot.get_guild(payload.guild_id).get_role(role[0][0])

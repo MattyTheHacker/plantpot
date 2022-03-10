@@ -66,7 +66,7 @@ class Inventory(commands.Cog):
 
     async def inventorymainmenu(self, ctx):
         embed = discord.Embed(title='Inventory Menu',
-                              description = 'Please react with a number based on which inventory you would like to see\nReact with :zero: for your regular inventory\nReact with :one: for your anime inventory\nReact with :two: for your pride inventory\nReact with :three: for your Halloween inventory\nOr wait 60s to cancel',
+                              description='Please react with a number based on which inventory you would like to see\nReact with :zero: for your regular inventory\nReact with :one: for your anime inventory\nReact with :two: for your pride inventory\nReact with :three: for your Halloween inventory\nOr wait 60s to cancel',
                               colour=ctx.guild.get_member(self.bot.user.id).colour)
         m = await ctx.send(embed=embed)
 
@@ -183,10 +183,12 @@ class Inventory(commands.Cog):
                     if len(user['images']) <= 10:
                         for i, item in enumerate(fullinv, start=1):
                             inv += f'{i}.\U00002800 {item["count"]}x **{item["name"]}** \n'
-                        embed = discord.Embed(colour=ctx.guild.get_member(self.bot.user.id).colour)
+                        embed = discord.Embed(
+                            colour=ctx.guild.get_member(self.bot.user.id).colour)
                         embed.title = 'your inventory'
                         embed.description = inv
-                        embed.set_thumbnail(url=ctx.message.author.avatar_url_as())
+                        embed.set_thumbnail(
+                            url=ctx.message.author.avatar_url_as())
                         await m.edit(embed=embed)
                         await asyncio.sleep(100)
                         await ctx.message.delete()
@@ -197,9 +199,11 @@ class Inventory(commands.Cog):
                         else:
                             perpage = 10
                         temp = 0
-                        f_embed = discord.Embed(colour=ctx.guild.get_member(self.bot.user.id).colour)
+                        f_embed = discord.Embed(
+                            colour=ctx.guild.get_member(self.bot.user.id).colour)
                         f_embed.title = 'your inventory'
-                        f_embed.set_thumbnail(url=ctx.message.author.avatar_url_as())
+                        f_embed.set_thumbnail(
+                            url=ctx.message.author.avatar_url_as())
                         await m.edit(embed=f_embed)
                         while True:
                             if temp == len(user['images']):
@@ -213,7 +217,8 @@ class Inventory(commands.Cog):
                                     break
                             embed = f_embed
                             embed.description = inventory
-                            embed.set_footer(text='page {0}/{1}'.format(ceil(temp/perpage), ceil(len(user['images'])/perpage)))
+                            embed.set_footer(
+                                text='page {0}/{1}'.format(ceil(temp/perpage), ceil(len(user['images'])/perpage)))
                             await m.edit(embed=embed)
                             await m.add_reaction('\U00002B05')
                             await m.add_reaction('\U000027A1')
@@ -236,7 +241,8 @@ class Inventory(commands.Cog):
                                             if temp % perpage == 0:
                                                 temp -= perpage * 2
                                             else:
-                                                temp -= perpage + (temp % perpage)
+                                                temp -= perpage + \
+                                                    (temp % perpage)
                                     await r.remove(ctx.message.author)
                                     break
                                 if str(r.emoji) == '\U000027A1':
@@ -313,7 +319,8 @@ class Inventory(commands.Cog):
                     if len(user['images']) < 10:
                         for i, item in enumerate(fullinv):
                             inv += f'{i+1}. **{item["name"]}**\n'
-                        embed = discord.Embed(colour=ctx.guild.get_member(self.bot.user.id).colour)
+                        embed = discord.Embed(
+                            colour=ctx.guild.get_member(self.bot.user.id).colour)
                         embed.title = 'your inventory'
                         embed.description = inv
                         embed.set_thumbnail(url=owner.avatar_url_as())
@@ -327,7 +334,8 @@ class Inventory(commands.Cog):
                         else:
                             perpage = 10
                         temp = 0
-                        f_embed = discord.Embed(colour=ctx.guild.get_member(self.bot.user.id).colour)
+                        f_embed = discord.Embed(
+                            colour=ctx.guild.get_member(self.bot.user.id).colour)
                         f_embed.title = 'your inventory'
                         f_embed.set_thumbnail(url=owner.avatar_url_as())
                         await m.edit(embed=f_embed)
@@ -343,7 +351,8 @@ class Inventory(commands.Cog):
                                     break
                             embed = f_embed
                             embed.description = inventory
-                            embed.set_footer(text='page {0}/{1}'.format(ceil(temp/perpage), ceil(len(fullinv)/perpage)))
+                            embed.set_footer(
+                                text='page {0}/{1}'.format(ceil(temp/perpage), ceil(len(fullinv)/perpage)))
                             await m.edit(embed=embed)
                             await m.add_reaction('\U00002B05')
                             await m.add_reaction('\U000027A1')
@@ -366,7 +375,8 @@ class Inventory(commands.Cog):
                                             if temp % perpage == 0:
                                                 temp -= perpage * 2
                                             else:
-                                                temp -= perpage + (temp % perpage)
+                                                temp -= perpage + \
+                                                    (temp % perpage)
                                     await r.remove(ctx.message.author)
                                     break
                                 if str(r.emoji) == '\U000027A1':
@@ -391,6 +401,7 @@ class Inventory(commands.Cog):
                 if await leaderboard.Leaderboard.checkimage(self, u['userid'], ctx.guild.id, image):
                     msg = await ctx.send(f'{user.mention}! {um} wants to give you {image}, do you accept? '
                                          '[(y)es/(n)o]')
+
                     def check(m):
                         return m.channel == ctx.channel and m.author == user
 
@@ -416,12 +427,13 @@ class Inventory(commands.Cog):
         if user == self.bot.user:
             return await ctx.send('thank you but i could never accept this gift')
         if user == ctx.message.author:
-            return await ctx.send ('you can\'t give yourself something!')
+            return await ctx.send('you can\'t give yourself something!')
         for u in d['users']:
             if ctx.message.author.id == u['userid']:
                 if leaderboard.AnimeLeaderboard.checkimage(self, ctx.author.id, ctx.guild.id, image):
                     msg = await ctx.send(f'{user.mention}! {um} wants to give you {image}, do you accept? '
                                          '[(y)es/(n)o]')
+
                     def check(m):
                         return m.channel == ctx.channel and m.author == user
 
@@ -480,7 +492,8 @@ class Inventory(commands.Cog):
             return await ctx.send(f'uh oh, looks like {u.mention} didn\'t make an offer')
 
         embed = discord.Embed(title=f'{u.display_name}\'s offer',
-                              description='\n'.join([character for character in offer0]),
+                              description='\n'.join(
+                                  [character for character in offer0]),
                               colour=ctx.guild.get_member(self.bot.user.id).colour)
         embed.set_thumbnail(url=u.avatar_url_as())
 
@@ -511,9 +524,12 @@ class Inventory(commands.Cog):
             return await ctx.send(f'uh oh, looks like {user.mention} didn\'t make an offer')
 
         temp0 = await ctx.send(f'{u.mention}, this is {user.mention}\'s offer, do you accept? [(y)es/(n)o]')
-        embed = discord.Embed(title='Final trade', colour=ctx.guild.get_member(self.bot.user.id).colour)
-        embed.add_field(name=f'{u.display_name}\'s trade', value='\n'.join([character for character in offer0]))
-        embed.add_field(name=f'{user.display_name}\'s trade', value='\n'.join([character for character in offer1]))
+        embed = discord.Embed(
+            title='Final trade', colour=ctx.guild.get_member(self.bot.user.id).colour)
+        embed.add_field(name=f'{u.display_name}\'s trade', value='\n'.join(
+            [character for character in offer0]))
+        embed.add_field(name=f'{user.display_name}\'s trade', value='\n'.join(
+            [character for character in offer1]))
         menu = await ctx.send(embed=embed)
 
         def check(m):
@@ -553,8 +569,10 @@ class Inventory(commands.Cog):
         def check(m):
             return m.channel == ctx.channel and m.author == user_from
 
-        embed = discord.Embed(title='Trading', colour=ctx.guild.get_member(self.bot.user.id).colour)
-        embed.add_field(name=f'{user_from.display_name}\'s offer', value='\U0000200B')
+        embed = discord.Embed(
+            title='Trading', colour=ctx.guild.get_member(self.bot.user.id).colour)
+        embed.add_field(
+            name=f'{user_from.display_name}\'s offer', value='\U0000200B')
         embed.set_thumbnail(url=user_from.avatar_url_as())
 
         menu = await ctx.send(embed=embed)
@@ -588,9 +606,12 @@ class Inventory(commands.Cog):
                         if not offer:
                             temp = '\U0000200B'
                         else:
-                            temp = '\n'.join([character for character in offer])
-                        embed = discord.Embed(title='Trading', colour=ctx.guild.get_member(self.bot.user.id).colour)
-                        embed.add_field(name=f'{user_from.display_name}\'s offer', value=temp)
+                            temp = '\n'.join(
+                                [character for character in offer])
+                        embed = discord.Embed(
+                            title='Trading', colour=ctx.guild.get_member(self.bot.user.id).colour)
+                        embed.add_field(
+                            name=f'{user_from.display_name}\'s offer', value=temp)
                         embed.set_thumbnail(url=user_from.avatar_url_as())
 
                         await menu.edit(embed=embed)
@@ -691,7 +712,7 @@ class Inventory(commands.Cog):
             return r.message == m and u == ctx.author
 
         embed = discord.Embed(title='Inventory Menu',
-                              description= 'Please react with a number based on how you would like your inventory sorted\nReact with :zero: for pick up order: **oldest - newest**\nReact with :one: for pick up order: **newest - oldest**\nReact with :two: for by alphabetical: **A - Z**\nReact with :three: for by alphabetical: **Z - A**\nReact with :four: for quantity: **high - low**\nReact with :five: for quantity: **low - high**\nReact with :six: for rarity: **high - low**\nReact with :seven: for rarity: **low - high**\n',
+                              description='Please react with a number based on how you would like your inventory sorted\nReact with :zero: for pick up order: **oldest - newest**\nReact with :one: for pick up order: **newest - oldest**\nReact with :two: for by alphabetical: **A - Z**\nReact with :three: for by alphabetical: **Z - A**\nReact with :four: for quantity: **high - low**\nReact with :five: for quantity: **low - high**\nReact with :six: for rarity: **high - low**\nReact with :seven: for rarity: **low - high**\n',
                               colour=ctx.guild.get_member(self.bot.user.id).colour)
         await m.edit(embed=embed)
 
@@ -744,8 +765,10 @@ class Inventory(commands.Cog):
 
         embed.set_thumbnail(url=ctx.author.avatar_url_as())
         while True:
-            embed.description = '\n'.join(f'{i + 1}.\U00002800 {items[page * perpage + i][1]}x **{items[page * perpage + i][0]}**' for i in range(0, len(items[page * perpage:page * perpage + perpage])))
-            embed.set_footer(text=f'Page {page + 1}/{ceil(len(items)/perpage)}')
+            embed.description = '\n'.join(f'{i + 1}.\U00002800 {items[page * perpage + i][1]}x **{items[page * perpage + i][0]}**' for i in range(
+                0, len(items[page * perpage:page * perpage + perpage])))
+            embed.set_footer(
+                text=f'Page {page + 1}/{ceil(len(items)/perpage)}')
 
             await m.edit(embed=embed)
 
@@ -817,8 +840,6 @@ class Inventory(commands.Cog):
         if isinstance(error, commands.MaxConcurrencyReached):
             await ctx.send('Only one trade can occur per channel, please wait until the previous trade is complete to begin yours')
 
+
 def setup(bot):
     bot.add_cog(Inventory(bot))
-
-
-

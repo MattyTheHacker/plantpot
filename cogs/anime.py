@@ -19,7 +19,6 @@ from discord.ext import commands
 class Anime(commands.Cog):
     version = '0.1'
 
-
     def __init__(self, bot):
         self.bot = bot
         self.emoji = '\U0001F338'
@@ -27,7 +26,7 @@ class Anime(commands.Cog):
     @commands.group(help='anime related commands', hidden=True)
     async def anime(self, ctx):
         if ctx.invoked_subcommand is None:
-                return
+            return
 
     @anime.command(name='event', help='starts an event using anime characters')
     @commands.max_concurrency(1, commands.BucketType.guild)
@@ -65,7 +64,8 @@ class Anime(commands.Cog):
                         p = 1
                         x = 7
                     ac = await getcharacterbyrarity(x)
-                    rarities = {1: "legendary", 2: "mythic", 3: "epic", 4: "ultra rare", 5: "rare", 6: "uncommon", 7: "common"}
+                    rarities = {1: "legendary", 2: "mythic", 3: "epic",
+                                4: "ultra rare", 5: "rare", 6: "uncommon", 7: "common"}
                 else:
                     if r >= 0.995:
                         p = 100
@@ -95,7 +95,8 @@ class Anime(commands.Cog):
                         p = 1
                         x = 9
                     ac = await pickcharacter(x)
-                    rarities = {1: "legendary popular", 2: "mythic popular", 3: "epic popular", 4: "rare popular", 5: "uncommon popular", 6: "epic obscure", 7: "rare obscure", 8: "uncommon obscure", 9: "common"}
+                    rarities = {1: "legendary popular", 2: "mythic popular", 3: "epic popular", 4: "rare popular",
+                                5: "uncommon popular", 6: "epic obscure", 7: "rare obscure", 8: "uncommon obscure", 9: "common"}
 
                 embed = discord.Embed()
                 name = ac['character_name']
@@ -109,6 +110,7 @@ class Anime(commands.Cog):
                 await pst.add_reaction('\U0001F504')
                 while True:
                     reroll = False
+
                     def check(r, u):
                         if r.message.id == pst.id and ((str(r.emoji) == '<:frogsmile:817589614905917440>' and u != self.bot.user) or (str(r.emoji) == '\U0001F504' and r.count == 4)):
                             return r, u
@@ -126,7 +128,7 @@ class Anime(commands.Cog):
                         elif await c.checkuser(ctx, usr.id) and (ctx.guild.id in [813532137050341407, 502944697225052181, 836267796219953242]):
                             await ctx.send(f'hold up {usr.mention}, you\'ve collected a character too recently, please wait a second to give other users a chance!')
                             await r.remove(usr)
-                        #elif await checkuserblacklist(usr.id):
+                        # elif await checkuserblacklist(usr.id):
                         #    await ctx.send(f'hold up {usr.mention}, you\'ve been blacklisted from plant, please visit my server to appeal your ban')
                         #    await r.remove(usr)
                         else:
@@ -227,7 +229,6 @@ async def getanime(rarity):
     l = rarities[rarity]['lower']
     u = rarities[rarity]['upper']
 
-
     while not c['characters']:
         s = await findshow(l, u)
         c = await getshowcharacters(s['mal_id'])
@@ -311,7 +312,8 @@ async def findshow(lower, upper):
             await asyncio.sleep(5)
             r = random.randrange(lower, upper)
             p = ceil((r+1)/50)
-            d = requests.get(f'https://api.jikan.moe/v3/search/anime?q=&order_by=members&sort=desc&page={p}')
+            d = requests.get(
+                f'https://api.jikan.moe/v3/search/anime?q=&order_by=members&sort=desc&page={p}')
             d = d.json()
             s = d['results'][r-(floor(r/50)*50)]
             rating = s['rated']
@@ -328,7 +330,8 @@ async def findshow(lower, upper):
 async def getshowcharacters(id):
     try:
         print(id)
-        response = requests.get(f'https://api.jikan.moe/v3/anime/{id}/characters_staff')
+        response = requests.get(
+            f'https://api.jikan.moe/v3/anime/{id}/characters_staff')
         response.raise_for_status()
     except requests.exceptions.Timeout:
         if not retry(getshowcharacters(id)):
@@ -400,4 +403,3 @@ async def checkuserblacklist(userid):
 
 def setup(bot):
     bot.add_cog(Anime(bot))
-

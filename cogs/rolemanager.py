@@ -101,7 +101,7 @@ class RoleManager(commands.Cog):
         p = await self.rolemanagermainmenu(ctx, m)
 
         if p:
-            #if rolemanager goes all the way through to a post, don't try to do more
+            # if rolemanager goes all the way through to a post, don't try to do more
             return
 
         await m.clear_reactions()
@@ -237,8 +237,10 @@ class RoleManager(commands.Cog):
                                   description='React :zero: to change the role\nReact :one: to change the emoji\nReact :asterisk: to delete the reaction\nReact :eject: to go back',
                                   colour=ctx.guild.get_member(self.bot.user.id).colour)
             if await self.checkrole(ctx, role[0][1]):
-                embed.add_field(name='ROLE UNASSIGNABLE', value='This role is higher in the hierarchy than me so I cannot assign it to other users', inline=False)
-            embed.add_field(name='Role', value=ctx.guild.get_role(role[0][1]).name)
+                embed.add_field(
+                    name='ROLE UNASSIGNABLE', value='This role is higher in the hierarchy than me so I cannot assign it to other users', inline=False)
+            embed.add_field(
+                name='Role', value=ctx.guild.get_role(role[0][1]).name)
             embed.add_field(name='Emoji', value=role[0][2])
 
             await m.edit(embed=embed)
@@ -332,7 +334,9 @@ class RoleManager(commands.Cog):
             except discord.errors.NotFound:
                 pass
 
-        embed.description = 'Please react to add roles\n' + '\n'.join(f'{role[1]} {ctx.guild.get_role(role[0]).mention}' for role in rolelist)
+        embed.description = 'Please react to add roles\n' + \
+            '\n'.join(
+                f'{role[1]} {ctx.guild.get_role(role[0]).mention}' for role in rolelist)
         embed.set_footer(text='Powered by chlorophyll')
 
         await self.executesql('INSERT INTO activemanagers (manager_id, channel_id, message_id) VALUES (?, ?, ?)', (managerid, ctx.channel.id, m.id))
@@ -491,6 +495,7 @@ class RoleManager(commands.Cog):
 # ------------------- DELETE ------------------- #
 #
 #
+
     async def deletemanager(self, ctx, m, managerid):
         def check(msg):
             return msg.author == ctx.author and msg.channel == ctx.channel
@@ -555,7 +560,7 @@ class RoleManager(commands.Cog):
         except discord.errors.NotFound:
             return
 
-    #deletes active manager entries from db if the post has been deleted
+    # deletes active manager entries from db if the post has been deleted
     async def unloadactives(self, ctx):
         activemanagerlist = await self.executesql("""SELECT active_id, message_id, channel_id FROM activemanagers 
                                                INNER JOIN rolemanagers USING(manager_id) 

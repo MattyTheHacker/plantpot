@@ -12,8 +12,10 @@ from cogs import leaderboard, serversettings, profile, checkers, flowers
 
 from discord.ext import commands
 
+
 class Imageposting(commands.Cog):
     version = '0.1'
+
     def __init__(self, bot):
         self.bot = bot
         self.spam = False
@@ -39,7 +41,6 @@ class Imageposting(commands.Cog):
             embed.title = f'".image {command}" help'
             embed.description = helpstr
             await ctx.send(embed=embed)
-
 
     @image.command(name='post', help='posts a random image, mostly debugging')
     async def post(self, ctx, *, desc=None):
@@ -97,7 +98,7 @@ class Imageposting(commands.Cog):
                 return await ctx.send('removed image')
         await ctx.send('image not found!')
 
-    #posts all images
+    # posts all images
     @image.command(name='all', help='posts all images')
     @checkers.is_guild_owner()
     async def all(self, ctx):
@@ -121,13 +122,13 @@ class Imageposting(commands.Cog):
                 "Uncommon **(10/4)**: 25%",
                 "Common **(1/1)**: 35%"]
         for r in temp:
-            tempstr += r +'\n'
+            tempstr += r + '\n'
         embed = discord.Embed()
         embed.title = "Flower rarities"
         embed.description = tempstr
         await ctx.send(embed=embed)
 
-    #starts posting images as over a function of time
+    # starts posting images as over a function of time
     @image.command(name='event', help='starts an image collecting event')
     @checkers.is_guild_owner()
     @commands.max_concurrency(2, commands.BucketType.guild)
@@ -142,19 +143,20 @@ class Imageposting(commands.Cog):
             if self.checktime(start):
                 p, d = await self.post(ctx)
                 await p.add_reaction(self.emoji)
+
                 def check(r, u):
                     if str(r.emoji) == self.emoji and r.message.id == p.id and u != self.bot.user:
                         return r, u
                 r, usr = await self.bot.wait_for('reaction_add', check=check)
                 await leaderboard.Leaderboard.addpoint(self, usr.id, ctx.guild.id, d, 1)
                 await profile.Profile.addpoint(self, usr.id, 1)
-                await ctx.send(self.emoji +" " + usr.mention + '**, you just picked up ' + d + "!** " + self.emoji)
+                await ctx.send(self.emoji + " " + usr.mention + '**, you just picked up ' + d + "!** " + self.emoji)
                 await ctx.send('**you\'ve earned one point!**')
                 await asyncio.sleep(cd)
                 start = time.time()
                 print('restarting countdown')
 
-    #ugly and doesn't work
+    # ugly and doesn't work
     @image.command(name='stop', help='stops the spam')
     @commands.is_owner()
     async def stop(self, ctx):
@@ -164,7 +166,6 @@ class Imageposting(commands.Cog):
         newtime = time.time()
         if random.random() > pow(0.99, newtime - oldtime):
             return True
-
 
     # ------------- Error handling ------------- #
 

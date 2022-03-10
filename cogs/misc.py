@@ -15,6 +15,7 @@ from datetime import datetime
 from json import loads
 from operator import itemgetter
 
+
 class Misc(commands.Cog):
 
     version = "1.5"
@@ -31,7 +32,7 @@ class Misc(commands.Cog):
         self.sendreminders.start()
 
         self.executeSQL("PRAGMA foreign_keys = ON")
-        
+
     def executeSQL(self, statement, data=()):
 
         self.cursor.execute(statement, data)
@@ -45,7 +46,7 @@ class Misc(commands.Cog):
             data = loads(file.read())
 
         lb = data['users']
-        lb.sort(key = itemgetter('points'), reverse=True)
+        lb.sort(key=itemgetter('points'), reverse=True)
         ids = [user["userid"] for user in lb[:min(len(lb), 10)]]
         # Gets all the ids of users in the top 10 of the regular leaderboard.
 
@@ -53,7 +54,7 @@ class Misc(commands.Cog):
             data = loads(file.read())
 
         lb = data['users']
-        lb.sort(key = itemgetter('points'), reverse=True)
+        lb.sort(key=itemgetter('points'), reverse=True)
         ids += [user["userid"] for user in lb[:min(len(lb), 10)]]
         # Gets all the ids of users in the top 10 of the anime leaderboard, and adds them to the list of regular leaderboard ids.
 
@@ -68,7 +69,7 @@ class Misc(commands.Cog):
             elif (825240728778047568 not in roleIds and member.id in ids):
                 await member.add_roles(server.get_role(825240728778047568))
                 # If the member is in the top 10 of a leaderboard, but does not have the role, add it.
-    
+
     async def executeSQLCheck(ctx):
         return 817801520074063974 in [role.id for role in ctx.author.roles] or ctx.author.id == 115560604047114248
         # Must have the Dev Team role to use executeSQL.
@@ -113,13 +114,15 @@ class Misc(commands.Cog):
         t = datetime.now()
         t = f'{t.hour - 6}:{t.minute}'
 
-        reminderlist = self.executeSQL('SELECT user_id, body FROM dm_reminders WHERE time = ?', (t,))
+        reminderlist = self.executeSQL(
+            'SELECT user_id, body FROM dm_reminders WHERE time = ?', (t,))
 
         for reminder in reminderlist:
             user = self.bot.get_user(reminder[0])
             await user.send(reminder[1])
 
-        reminderlist = self.executeSQL('SELECT channel_id, body FROM guild_reminders WHERE time = ?', (t,))
+        reminderlist = self.executeSQL(
+            'SELECT channel_id, body FROM guild_reminders WHERE time = ?', (t,))
 
         for reminder in reminderlist:
             channel = self.bot.get_channel(reminder[0])

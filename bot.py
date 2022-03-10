@@ -1,4 +1,4 @@
-#bot.py
+# bot.py
 
 import os
 import discord
@@ -22,6 +22,7 @@ bot = commands.Bot(command_prefix='.', intents=intents)
 rolecheck = helpers.ReactionChecker(bot)
 eventcheck = helpers.EventChecker(bot)
 
+
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
@@ -29,6 +30,7 @@ async def on_ready():
     for guild in bot.guilds:
         print(guild.name)
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='photosynthesis'))
+
 
 @bot.event
 async def on_guild_join(guild):
@@ -39,6 +41,7 @@ async def on_guild_join(guild):
     s = serversettings.ServerSetter(guild)
     await s.setupserver()
     print('debug')
+
 
 @bot.event
 async def on_message(message):
@@ -136,12 +139,14 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+
 @bot.event
 async def on_raw_reaction_add(payload):
     if payload.member == bot.user:
         return
     await rolecheck.addreactions(payload)
     await eventcheck.eventcollect(payload)
+
 
 @bot.event
 async def on_raw_reaction_remove(payload):

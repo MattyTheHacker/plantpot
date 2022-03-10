@@ -32,7 +32,7 @@ class Premium(commands.Cog):
             )
         """)
 
-    def executeSQL(self, statement, data = ()):
+    def executeSQL(self, statement, data=()):
 
         self.cursor.execute(statement, data)
         self.conn.commit()
@@ -45,16 +45,16 @@ class Premium(commands.Cog):
         # Must have the Plant Team role to edit premium servers.
 
     @commands.command(
-        name = "premium",
-        aliases = ["p"],
+        name="premium",
+        aliases=["p"],
 
-        brief = "All about premium",
-        help = "Use this command to see all the perks you get for buying premium!",
+        brief="All about premium",
+        help="Use this command to see all the perks you get for buying premium!",
 
-        usage = "[h]"
+        usage="[h]"
     )
     async def premium(self, ctx, *args):
-        
+
         if (len(args) and args[0] in ["e", "enable"] and self.premiumCheck(ctx)):
             await self.premiumEnable(ctx, args[1:])
 
@@ -65,12 +65,12 @@ class Premium(commands.Cog):
             await self.premiumHelp(ctx)
 
     @commands.command(
-        name = "enablePremium",
-        aliases = ["ep"],
-        hidden = True,
+        name="enablePremium",
+        aliases=["ep"],
+        hidden=True,
     )
     @commands.check(premiumCheck)
-    async def premiumEnable(self, ctx, id = None):
+    async def premiumEnable(self, ctx, id=None):
 
         try:
             id = int(id)
@@ -84,12 +84,12 @@ class Premium(commands.Cog):
                 WHERE user_id = ?
             """, (id,)))):
                 embed = discord.Embed(
-                    title = "Enable Premium",
-                    description = "{} already has premium.".format(user.mention),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Enable Premium",
+                    description="{} already has premium.".format(user.mention),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
 
             else:
                 self.executeSQL("""
@@ -98,36 +98,36 @@ class Premium(commands.Cog):
                 """, (id,))
 
                 embed = discord.Embed(
-                    title = "Enable Premium",
-                    description = "Premium enabled for {}!".format(user.mention),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Enable Premium",
+                    description="Premium enabled for {}!".format(user.mention),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
 
         else:
             embed = discord.Embed(
-                title = "Enable Premium Error",
-                description = "Invalid User ID: {}".format(id),
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Enable Premium Error",
+                description="Invalid User ID: {}".format(id),
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await ctx.send(embed = embed)
+            await ctx.send(embed=embed)
 
     @commands.command(
-        name = "disablePremium",
-        aliases = ["dp"],
-        hidden = True,
+        name="disablePremium",
+        aliases=["dp"],
+        hidden=True,
     )
     @commands.check(premiumCheck)
-    async def premiumDisable(self, ctx, id = None):
+    async def premiumDisable(self, ctx, id=None):
 
         try:
             id = int(id)
             user = await self.bot.fetch_user(id)
         except (TypeError, ValueError, discord.errors.NotFound):
             user = None
-            
+
         if (user):
             if (len(self.executeSQL("""
                 SELECT user_id FROM premium_users
@@ -139,63 +139,65 @@ class Premium(commands.Cog):
                 """, (id,))
 
                 embed = discord.Embed(
-                    title = "Disable Premium",
-                    description = "Premium disabled for {}.".format(user.mention),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Disable Premium",
+                    description="Premium disabled for {}.".format(
+                        user.mention),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
 
             else:
                 embed = discord.Embed(
-                    title = "Disable Premium",
-                    description = "{} doesn't have premium.".format(user.mention),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Disable Premium",
+                    description="{} doesn't have premium.".format(
+                        user.mention),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
 
         else:
             embed = discord.Embed(
-                title = "Disable Premium Error",
-                description = "Invalid User ID: {}".format(id),
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Disable Premium Error",
+                description="Invalid User ID: {}".format(id),
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await ctx.send(embed = embed)
+            await ctx.send(embed=embed)
 
     @commands.command(
-        name = "premiumHelp",
-        hidden = True,
+        name="premiumHelp",
+        hidden=True,
     )
     async def premiumHelp(self, ctx):
 
         embed = discord.Embed(
-            title = "The Perks of Premium",
-            description = "Premium costs XXX.",
-            colour = ctx.guild.get_member(self.bot.user.id).colour,
-            timestamp = datetime.now(),
+            title="The Perks of Premium",
+            description="Premium costs XXX.",
+            colour=ctx.guild.get_member(self.bot.user.id).colour,
+            timestamp=datetime.now(),
         )
         embed.add_field(
-            name = "Server Key",
-            value = "Give a server of your choice premium using .givePremium!",
+            name="Server Key",
+            value="Give a server of your choice premium using .givePremium!",
         )
         embed.add_field(
-            name = "Quizzes",
-            value = "Unlimited quizzes/questions/answers!\nCustom emojis!",
+            name="Quizzes",
+            value="Unlimited quizzes/questions/answers!\nCustom emojis!",
         )
         embed.add_field(
-            name = "Profiles",
-            value = "More fields and a custom colour!",
+            name="Profiles",
+            value="More fields and a custom colour!",
         )
 
-        await ctx.send(embed = embed)
-    
+        await ctx.send(embed=embed)
+
     @commands.command(
-        name = "givePremium",
-        aliases = ["gp"],
+        name="givePremium",
+        aliases=["gp"],
     )
-    async def givePremium(self, ctx, id = None):
+    async def givePremium(self, ctx, id=None):
 
         premiumId = self.executeSQL("""
             SELECT premium_user_id FROM premium_users
@@ -210,12 +212,12 @@ class Premium(commands.Cog):
                 server = None
             except discord.errors.Forbidden:
                 embed = discord.Embed(
-                    title = "Give Premium Error",
-                    description = "I am not in that server.".format(id),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Give Premium Error",
+                    description="I am not in that server.".format(id),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
                 return
 
             if (server):
@@ -226,30 +228,31 @@ class Premium(commands.Cog):
                 """, (id, ctx.author.id))
 
                 embed = discord.Embed(
-                    title = "Give Premium",
-                    description = "You gave {} premium!".format(server.name),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Give Premium",
+                    description="You gave {} premium!".format(server.name),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
 
             else:
                 embed = discord.Embed(
-                    title = "Give Premium Error",
-                    description = "Invalid Server ID: {}".format(id),
-                    colour = ctx.guild.get_member(self.bot.user.id).colour,
-                    timestamp = datetime.now(),
+                    title="Give Premium Error",
+                    description="Invalid Server ID: {}".format(id),
+                    colour=ctx.guild.get_member(self.bot.user.id).colour,
+                    timestamp=datetime.now(),
                 )
-                await ctx.send(embed = embed)
+                await ctx.send(embed=embed)
 
         else:
             embed = discord.Embed(
-                title = "Give Premium Error",
-                description = "You do not have premium.",
-                colour = ctx.guild.get_member(self.bot.user.id).colour,
-                timestamp = datetime.now(),
+                title="Give Premium Error",
+                description="You do not have premium.",
+                colour=ctx.guild.get_member(self.bot.user.id).colour,
+                timestamp=datetime.now(),
             )
-            await ctx.send(embed = embed)
+            await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Premium(bot))
